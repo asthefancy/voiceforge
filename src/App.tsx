@@ -3,6 +3,7 @@ import { Moon, Sun, Radio, FileUp, Grid3x3 } from "lucide-react";
 import type { EffectNodeConfig, Preset } from "@/types";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useTheme } from "@/hooks/useTheme";
+import { useSoundboard } from "@/hooks/useSoundboard";
 import { useToast } from "@/components/ui/toast";
 import { presetStore } from "@/lib/storage";
 import { readSharedPresetFromUrl } from "@/lib/share";
@@ -18,6 +19,7 @@ import { EffectChainEditor } from "@/components/EffectChainEditor";
 import { RealtimePanel } from "@/components/RealtimePanel";
 import { FileProcessor } from "@/components/FileProcessor";
 import { Soundboard } from "@/components/Soundboard";
+import { SaveClipDialog } from "@/components/SaveClipDialog";
 
 export default function App() {
   const engine = useAudioEngine();
@@ -63,6 +65,9 @@ export default function App() {
     if (!ok) toast("マイクへのアクセスが許可されませんでした。設定から権限を許可してください。", "error");
     return ok;
   }, [engine, micReady, toast]);
+
+  // サウンドボードの状態と録音フロー（録音はリアルタイムから、表示はボードで連動）
+  const sb = useSoundboard(engine, ensureMic, toast);
 
   const toggleMic = useCallback(async () => {
     if (micReady) {
@@ -179,6 +184,9 @@ export default function App() {
               onInputGain={setInputGainDb}
               onOutputGain={setOutputGainDb}
               onApplySuggestion={applySuggestion}
+              recording={sb.recording}
+              onStartRecording={sb.startRecording}
+              onStopRecording={sb.stopRecording}
             />
           </TabsContent>
 
@@ -187,12 +195,14 @@ export default function App() {
           </TabsContent>
 
           <TabsContent value="board" className="mt-4 focus-visible:outline-none">
-            <Soundboard engine={engine} ensureMic={ensureMic} />
+            <Soundboard clips={sb.clips} onRemove={sb.removeClip} />
           </TabsContent>
         </Tabs>
 
         <EffectChainEditor chain={chain} onChange={setChain} />
       </main>
+
+      <SaveClipDialog pending={sb.pending} onClose={sb.discardPending} onSave={sb.savePending} />
     </div>
   );
 }

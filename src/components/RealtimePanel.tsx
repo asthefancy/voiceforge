@@ -1,4 +1,4 @@
-import { Mic, MicOff, Headphones, AlertTriangle } from "lucide-react";
+import { Mic, MicOff, Headphones, AlertTriangle, Circle, Square } from "lucide-react";
 import type { AudioEngine } from "@/lib/audioEngine";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -19,6 +19,9 @@ interface Props {
   onInputGain: (db: number) => void;
   onOutputGain: (db: number) => void;
   onApplySuggestion: (pitchSemitones: number, formantHz: number) => void;
+  recording: boolean;
+  onStartRecording: () => void;
+  onStopRecording: () => void;
 }
 
 export function RealtimePanel(props: Props) {
@@ -34,20 +37,41 @@ export function RealtimePanel(props: Props) {
     onInputGain,
     onOutputGain,
     onApplySuggestion,
+    recording,
+    onStartRecording,
+    onStopRecording,
   } = props;
 
   return (
     <div className="space-y-4">
       <Card className="space-y-4 p-4">
-        <Button
-          size="lg"
-          variant={micReady ? "destructive" : "default"}
-          className="w-full"
-          onClick={onToggleMic}
-        >
-          {micReady ? <MicOff /> : <Mic />}
-          {micReady ? "マイクを停止" : "マイクを開始"}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            size="lg"
+            variant={micReady ? "destructive" : "default"}
+            className="flex-1"
+            onClick={onToggleMic}
+          >
+            {micReady ? <MicOff /> : <Mic />}
+            {micReady ? "マイクを停止" : "マイクを開始"}
+          </Button>
+          {recording ? (
+            <Button size="lg" variant="destructive" onClick={onStopRecording} aria-label="録音停止">
+              <Square /> 停止
+            </Button>
+          ) : (
+            <Button size="lg" variant="accent" onClick={onStartRecording} aria-label="録音してボードに保存">
+              <Circle className="fill-current" /> 録音
+            </Button>
+          )}
+        </div>
+
+        {recording && (
+          <div className="flex items-center gap-2 rounded-xl bg-destructive/15 px-3 py-2 text-sm text-destructive">
+            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-destructive" />
+            録音中… 加工後の声をキャプチャしています
+          </div>
+        )}
 
         <div className="flex items-center justify-between rounded-xl bg-secondary/40 p-3">
           <div className="flex items-center gap-2">
