@@ -3,6 +3,7 @@ import type { SoundClip } from "@/types";
 import type { AudioEngine } from "@/lib/audioEngine";
 import { clipStore } from "@/lib/storage";
 import { haptic } from "@/lib/native";
+import { audioBufferToWav } from "@/lib/wav";
 
 export interface PendingClip {
   blob: Blob;
@@ -44,8 +45,15 @@ export function useSoundboard(engine: AudioEngine, ensureMic: () => Promise<bool
     const blob = await engine.stopRecording();
     setRecording(false);
     if (!blob) return;
-    const duration = await getDuration(blob);
-    setPending({ blob, duration });
+    // 録音(webm/opus)を PCM へ展開し WAV に変換（どこでも再生できる形式で保存）。
+    const wav = await transcodeToWav(blob);
+    if (wav) {
+      setPending({ blob: wav.blob, duration: wav.duration });
+    } else {
+      // 変換不可な環境では元データのまま保存（後方互換）
+      const duration = await getDuration(blob);
+      setPending({ blob, duration });
+    }
   }, [engine]);
 
   const savePending = useCallback(
@@ -76,6 +84,21 @@ export function useSoundboard(engine: AudioEngine, ensureMic: () => Promise<bool
   const removeClip = useCallback((id: string) => void clipStore.remove(id).then(setClips), []);
 
   return { clips, recording, startRecording, stopRecording, pending, savePending, discardPending, removeClip };
+}
+
+/**
+ * 録音 Blob(webm/opus 等) を decodeAudioData で PCM 展開し WAV へ変換。
+ * 同時に正確な長さ(秒)も得られる。失敗時は null（呼び出し側でフォールバック）。
+ */
+async function transcodeToWav(blob: Blob): Promise<{ blob: Blob; duration: number } | null> {
+  try {
+    const ctx = new AudioContext();
+    const buffer = await ctx.decodeAudioData(await blob.arrayBuffer());
+    await ctx.close();
+    return { blob: audioBufferToWav(buffer), duration: buffer.duration };
+  } catch {
+    return null;
+  }
 }
 
 /** Blob の音声長を取得（取得不能なら 0）。一時 object URL は必ず revoke する。 */

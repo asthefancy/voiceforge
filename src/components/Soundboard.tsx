@@ -57,10 +57,16 @@ export function Soundboard({ clips, onRemove }: Props) {
   const exportClip = async (clip: SoundClip) => {
     const blob = clip.blob ?? (clip.dataUrl ? await (await fetch(clip.dataUrl)).blob() : null);
     if (!blob) return;
-    const ext = blob.type.includes("ogg") ? "ogg" : blob.type.includes("mp4") ? "m4a" : "webm";
+    const ext = blob.type.includes("wav")
+      ? "wav"
+      : blob.type.includes("ogg")
+        ? "ogg"
+        : blob.type.includes("mp4")
+          ? "m4a"
+          : "webm";
     const filename = `${clip.name.replace(/[\\/:*?"<>|]/g, "_")}.${ext}`;
 
-    const file = new File([blob], filename, { type: blob.type || "audio/webm" });
+    const file = new File([blob], filename, { type: blob.type || "audio/wav" });
     const navAny = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
     if (navAny.canShare?.({ files: [file] })) {
       try {
