@@ -3,6 +3,7 @@ import { Moon, Sun, Radio, FileUp, Grid3x3 } from "lucide-react";
 import type { EffectNodeConfig, Preset } from "@/types";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useTheme } from "@/hooks/useTheme";
+import { useToast } from "@/components/ui/toast";
 import { presetStore } from "@/lib/storage";
 import { readSharedPresetFromUrl } from "@/lib/share";
 import { makeEffectConfig } from "@/lib/effects";
@@ -21,6 +22,7 @@ import { Soundboard } from "@/components/Soundboard";
 export default function App() {
   const engine = useAudioEngine();
   const { theme, toggle } = useTheme();
+  const toast = useToast();
 
   const [chain, setChain] = useState<EffectNodeConfig[]>([]);
   const [inputGainDb, setInputGainDb] = useState(0);
@@ -58,9 +60,9 @@ export default function App() {
     if (micReady) return true;
     const ok = await engine.useMic();
     setMicReady(ok);
-    if (!ok) alert("マイクへのアクセスが許可されませんでした。設定から権限を許可してください。");
+    if (!ok) toast("マイクへのアクセスが許可されませんでした。設定から権限を許可してください。", "error");
     return ok;
-  }, [engine, micReady]);
+  }, [engine, micReady, toast]);
 
   const toggleMic = useCallback(async () => {
     if (micReady) {

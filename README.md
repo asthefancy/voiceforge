@@ -195,6 +195,8 @@ npm run cap:android       # Android Studio
 - **テスト / CI**: `vitest` で WAV エンコーダ / プリセット共有 / F0 推定 / エフェクト定義を検証
   （`src/lib/*.test.ts`、DOM 非依存の純粋関数のみ）。`.github/workflows/ci.yml` で
   push/PR ごとに lint(`tsc -b`)・test・build を実行。
+- **堅牢性 / UX**: 描画エラーは `ErrorBoundary` で白画面を防ぎ再読み込みへ誘導。
+  ブロッキングな `alert()` は廃し、非ブロッキングなアプリ内トースト（`ui/toast.tsx`）に統一。
 
 ---
 

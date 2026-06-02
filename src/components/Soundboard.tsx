@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/toast";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,7 @@ interface Props {
  * 加工後の自分の声を録音→タグ付き保存→検索→ワンクリック再生。完全端末内。
  */
 export function Soundboard({ engine, ensureMic }: Props) {
+  const toast = useToast();
   const [clips, setClips] = useState<SoundClip[]>([]);
   const [recording, setRecording] = useState(false);
   const [query, setQuery] = useState("");
@@ -199,8 +201,11 @@ export function Soundboard({ engine, ensureMic }: Props) {
           };
           void clipStore
             .save(clip)
-            .then(setClips)
-            .catch(() => alert("保存に失敗しました。ストレージ空き容量をご確認ください。"));
+            .then((c) => {
+              setClips(c);
+              toast("クリップを保存しました", "success");
+            })
+            .catch(() => toast("保存に失敗しました。ストレージ空き容量をご確認ください。", "error"));
           setPending(null);
         }}
       />
