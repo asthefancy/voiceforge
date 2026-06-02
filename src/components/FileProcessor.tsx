@@ -146,7 +146,7 @@ export function FileProcessor({ chain, inputGainDb, outputGainDb }: Props) {
         <button
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="flex w-full flex-col items-center gap-2 rounded-xl border border-dashed border-border py-8 transition-colors hover:bg-secondary/40 disabled:opacity-50"
+          className="focus-ring flex w-full flex-col items-center gap-2 rounded-xl border border-dashed border-border py-8 transition-colors hover:bg-secondary/40 disabled:opacity-50"
         >
           <Upload className="h-7 w-7 text-accent" />
           <span className="text-sm font-medium">音声・動画ファイルを選択</span>

@@ -326,6 +326,8 @@ export function WaveformEditor({ buffer, onRangeChange, onEnvelopeChange }: Prop
       <canvas
         ref={canvasRef}
         className="h-28 w-full touch-none rounded-xl bg-background/40"
+        role="img"
+        aria-label={mode === "trim" ? "波形トリム編集領域" : "ゲインエンベロープ編集領域"}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -343,7 +345,7 @@ export function WaveformEditor({ buffer, onRangeChange, onEnvelopeChange }: Prop
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>タップで追加 / ドラッグで移動 / 中間点は長押しで削除</span>
           <button
-            className="flex items-center gap-1 rounded-md px-2 py-1 hover:bg-secondary"
+            className="focus-ring flex items-center gap-1 rounded-md px-2 py-1 hover:bg-secondary"
             onClick={() => setPoints(FLAT)}
           >
             <RotateCcw className="h-3.5 w-3.5" /> リセット

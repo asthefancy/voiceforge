@@ -39,7 +39,7 @@ export function PresetBar({ chain, inputGainDb, outputGainDb, userPresets, onApp
           <button
             key={p.id}
             onClick={() => onApply(p)}
-            className="shrink-0 rounded-full border border-border bg-secondary/50 px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary active:scale-95"
+            className="focus-ring shrink-0 rounded-full border border-border bg-secondary/50 px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary active:scale-95"
           >
             {p.name}
           </button>

@@ -170,14 +170,14 @@ export function Soundboard({ engine, ensureMic }: Props) {
               <button
                 onClick={() => void exportClip(clip)}
                 aria-label="共有・保存"
-                className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                className="focus-ring rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
               >
                 <Share2 className="h-4 w-4" />
               </button>
               <button
                 onClick={() => remove(clip.id)}
                 aria-label="削除"
-                className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
+                className="focus-ring rounded-lg p-2 text-muted-foreground hover:bg-destructive/20 hover:text-destructive"
               >
                 <Trash2 className="h-4 w-4" />
               </button>

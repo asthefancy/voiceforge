@@ -148,7 +148,7 @@ function AddEffectDialog({ onAdd }: { onAdd: (kind: EffectKind) => void }) {
             <DialogClose asChild key={kind}>
               <button
                 onClick={() => onAdd(kind)}
-                className="rounded-xl border border-border bg-secondary/40 p-3 text-left transition-colors hover:bg-secondary"
+                className="focus-ring rounded-xl border border-border bg-secondary/40 p-3 text-left transition-colors hover:bg-secondary"
               >
                 <p className="text-sm font-medium">{SPECS[kind].label}</p>
                 <p className="text-[11px] text-muted-foreground">{SPECS[kind].description}</p>

@@ -50,12 +50,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={show}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4">
+      <div
+        className="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex flex-col items-center gap-2 px-4"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
         {toasts.map((t) => {
           const Icon = ICONS[t.variant];
           return (
             <div
               key={t.id}
+              role={t.variant === "error" ? "alert" : "status"}
               className={cn(
                 "pointer-events-auto flex w-full max-w-sm items-center gap-2 rounded-xl border bg-card px-3 py-2.5 shadow-2xl",
                 "data-[v=open]:animate-in slide-in-from-bottom-2",
@@ -64,6 +69,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               data-v="open"
             >
               <Icon
+                aria-hidden="true"
                 className={cn(
                   "h-5 w-5 shrink-0",
                   t.variant === "error" ? "text-destructive" : t.variant === "success" ? "text-accent" : "text-muted-foreground",

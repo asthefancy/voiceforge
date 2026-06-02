@@ -85,5 +85,5 @@ export function Visualizer({ engine, active, className }: Props) {
     };
   }, [engine, active]);
 
-  return <canvas ref={canvasRef} className={className} />;
+  return <canvas ref={canvasRef} className={className} role="img" aria-label="音声波形ビジュアライザー" />;
 }

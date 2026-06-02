@@ -53,8 +53,9 @@ export function LatencyControl({ engine }: Props) {
           <button
             key={p.label}
             onClick={() => apply(p.lookAhead)}
+            aria-pressed={selected === p.lookAhead}
             className={cn(
-              "rounded-xl border p-2 text-center transition-colors",
+              "focus-ring rounded-xl border p-2 text-center transition-colors",
               selected === p.lookAhead
                 ? "border-accent bg-accent/15"
                 : "border-border bg-secondary/40 hover:bg-secondary",

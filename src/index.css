@@ -52,6 +52,25 @@
   ::-webkit-scrollbar-thumb {
     @apply bg-muted rounded-full;
   }
+
+  /* 動きを減らす設定のユーザーにはアニメーションを抑制（前庭障害等への配慮） */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* 素の <button> 等に付ける共通フォーカスリング（キーボード操作可視化） */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
 }
 
 @layer utilities {

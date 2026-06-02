@@ -51,7 +51,7 @@ export function EffectCard({ config, onChange, onRemove, dragHandleProps, isDrag
       <div className="flex items-center gap-2 p-3">
         <button
           aria-label="並べ替え"
-          className="touch-none rounded-lg p-1 text-muted-foreground active:bg-secondary"
+          className="focus-ring touch-none rounded-lg p-1 text-muted-foreground active:bg-secondary"
           {...dragHandleProps}
         >
           <GripVertical className="h-5 w-5" />
@@ -69,7 +69,7 @@ export function EffectCard({ config, onChange, onRemove, dragHandleProps, isDrag
         <button
           aria-label="削除"
           onClick={onRemove}
-          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-destructive/20 hover:text-destructive"
+          className="focus-ring rounded-lg p-2 text-muted-foreground transition-colors hover:bg-destructive/20 hover:text-destructive"
         >
           <Trash2 className="h-4 w-4" />
         </button>
