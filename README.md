@@ -100,37 +100,39 @@ npm test           # vitest（純粋関数のユニットテスト）
 
 ## 📱 Capacitor（iOS / Android）
 
-`capacitor.config.ts` は作成済み（`appId: com.voiceforge.app`）。
+`capacitor.config.ts` 作成済み（`appId: com.voiceforge.app`）。
+
+### Android（生成済み ✅）
+
+`android/` プロジェクトは生成済みで、**`RECORD_AUDIO`/`MODIFY_AUDIO_SETTINGS` も追加済み**。
+Android Studio で開いてビルド/実行/署名するだけ。
 
 ```bash
-# 1. プラットフォーム追加（初回のみ）
-npx cap add ios
-npx cap add android
-
-# 2. ビルド → 同期
+# web を最新化して android へ同期
 npm run cap:sync          # = build + cap sync
-
-# 3. 各 IDE で開く
-npm run cap:ios           # Xcode（要 macOS）
-npm run cap:android       # Android Studio
+# Android Studio で開く（SDK/JDK は Studio が補完）
+npm run cap:android       # = build + cap sync android + cap open android
 ```
 
-### ネイティブ権限設定（必須）
+> マイクは Capacitor のブリッジが `getUserMedia` 呼び出し時に実行時権限を要求する
+> （manifest に `RECORD_AUDIO` がある前提）。生成物（`assets/public` 等）は
+> `android/.gitignore` で除外され、ソースのみ管理される。
 
-**iOS — `ios/App/App/Info.plist`**
+### iOS（未生成 ⛔ macOS 必須）
+
+iOS プロジェクトの生成・ビルドは **macOS + Xcode が必須**（Windows 不可）。Mac 上で:
+
+```bash
+npm i @capacitor/ios
+npx cap add ios
+npm run cap:ios           # = build + cap sync ios + cap open ios
+```
+
+`ios/App/App/Info.plist` に下記を追加（マイク必須）:
 
 ```xml
 <key>NSMicrophoneUsageDescription</key>
 <string>声をリアルタイムで変換するためにマイクを使用します。音声は端末内でのみ処理され、外部に送信されません。</string>
-```
-
-**Android — `android/app/src/main/AndroidManifest.xml`**
-
-```xml
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-<!-- 動画/音声の保存に応じて -->
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-    android:maxSdkVersion="29" />
 ```
 
 > ネイティブで完全オフラインにしたい場合は、`src/lib/ffmpeg.ts` の `CORE_BASE`
