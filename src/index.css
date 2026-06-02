@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 24% 6%;
+    --foreground: 0 0% 98%;
+    --card: 240 20% 9%;
+    --card-foreground: 0 0% 98%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 14% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 12% 14%;
+    --muted-foreground: 240 6% 64%;
+    --accent: 189 94% 55%;
+    --accent-foreground: 240 24% 6%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 14% 18%;
+    --input: 240 14% 18%;
+    --ring: 258 90% 66%;
+    --radius: 0.9rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    /* iOS セーフエリア対応 */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* スクロールバーを控えめに */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: linear-gradient(180deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.7));
+    backdrop-filter: blur(12px);
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

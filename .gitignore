@@ -1,0 +1,19 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+
+# Capacitor ネイティブプロジェクト（cap add で生成。コミット方針はチームで決める）
+ios/App/Pods
+ios/App/build
+android/.gradle
+android/app/build
+android/build
+android/local.properties
+android/.idea
+*.log
+.vite
+
+# Claude Code のマシンローカル設定（個人ごとの許可リスト等）
+.claude/settings.local.json
