@@ -20,6 +20,7 @@ import { RealtimePanel } from "@/components/RealtimePanel";
 import { FileProcessor } from "@/components/FileProcessor";
 import { Soundboard } from "@/components/Soundboard";
 import { SaveClipDialog } from "@/components/SaveClipDialog";
+import { RecordingIndicator } from "@/components/RecordingIndicator";
 
 export default function App() {
   const engine = useAudioEngine();
@@ -136,9 +137,12 @@ export default function App() {
           <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" className="h-7 w-7" />
           <h1 className="text-lg font-bold gradient-text">VoiceForge</h1>
         </div>
-        <Button variant="ghost" size="icon" onClick={toggle} aria-label="テーマ切替">
-          {theme === "dark" ? <Sun /> : <Moon />}
-        </Button>
+        <div className="flex items-center gap-2">
+          <RecordingIndicator recording={sb.recording} onStop={sb.stopRecording} />
+          <Button variant="ghost" size="icon" onClick={toggle} aria-label="テーマ切替">
+            {theme === "dark" ? <Sun /> : <Moon />}
+          </Button>
+        </div>
       </header>
 
       <main className="flex-1 space-y-4 px-4 pb-24 pt-4">
