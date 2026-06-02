@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { VoiceAnalyzer } from "@/components/VoiceAnalyzer";
+import { LatencyControl } from "@/components/LatencyControl";
 
 interface Props {
   engine: AudioEngine;
@@ -69,6 +70,8 @@ export function RealtimePanel(props: Props) {
         <GainSlider label="入力ゲイン" value={inputGainDb} onChange={onInputGain} />
         <GainSlider label="出力ゲイン" value={outputGainDb} onChange={onOutputGain} />
       </Card>
+
+      <LatencyControl engine={engine} />
 
       <VoiceAnalyzer engine={engine} ensureMic={ensureMic} onApply={onApplySuggestion} />
     </div>

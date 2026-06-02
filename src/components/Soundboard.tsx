@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Mic, Square, Play, Trash2, Search, Tag } from "lucide-react";
+import { Mic, Square, Play, Trash2, Search, Tag, Share2 } from "lucide-react";
 import type { SoundClip } from "@/types";
 import type { AudioEngine } from "@/lib/audioEngine";
 import { clipStore } from "@/lib/storage";
-import { haptic } from "@/lib/native";
+import { haptic, saveBlob } from "@/lib/native";
 import { formatTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,6 +89,30 @@ export function Soundboard({ engine, ensureMic }: Props) {
 
   const remove = (id: string) => void clipStore.remove(id).then(setClips);
 
+  /** クリップを共有（Web Share API 対応端末）または保存（ダウンロード/アプリ内保存）。 */
+  const exportClip = async (clip: SoundClip) => {
+    // 新クリップは Blob、旧クリップは dataUrl から Blob を復元
+    const blob = clip.blob ?? (clip.dataUrl ? await (await fetch(clip.dataUrl)).blob() : null);
+    if (!blob) return;
+    const ext = blob.type.includes("ogg") ? "ogg" : blob.type.includes("mp4") ? "m4a" : "webm";
+    const filename = `${clip.name.replace(/[\\/:*?"<>|]/g, "_")}.${ext}`;
+
+    // 対応端末ではファイル共有を優先
+    const file = new File([blob], filename, { type: blob.type || "audio/webm" });
+    const navAny = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+    if (navAny.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: clip.name });
+        await haptic();
+        return;
+      } catch {
+        // 共有キャンセル等は保存にフォールバック
+      }
+    }
+    await saveBlob(filename, blob);
+    await haptic();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -141,6 +165,13 @@ export function Soundboard({ engine, ensureMic }: Props) {
                   ))}
                 </div>
               </div>
+              <button
+                onClick={() => void exportClip(clip)}
+                aria-label="共有・保存"
+                className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
               <button
                 onClick={() => remove(clip.id)}
                 aria-label="削除"

@@ -51,6 +51,30 @@ export class AudioEngine {
     return Tone.getContext();
   }
 
+  /**
+   * 現在のレイテンシ指標(ms)。
+   * - lookAhead: Tone のスケジューリング先読み（下げるほど低遅延だがグリッチ耐性低下）
+   * - base: AudioContext の baseLatency（処理ブロック由来）
+   * - output: outputLatency（出力デバイス由来。非対応環境では 0）
+   */
+  getLatencyMs(): { lookAhead: number; base: number; output: number } {
+    const ctx = Tone.getContext();
+    const raw = ctx.rawContext as unknown as {
+      baseLatency?: number;
+      outputLatency?: number;
+    };
+    return {
+      lookAhead: ctx.lookAhead * 1000,
+      base: (raw.baseLatency ?? 0) * 1000,
+      output: (raw.outputLatency ?? 0) * 1000,
+    };
+  }
+
+  /** Tone の lookAhead(秒) を設定。低遅延/安定のトレードオフ調整に使う。 */
+  setLookAhead(seconds: number): void {
+    Tone.getContext().lookAhead = seconds;
+  }
+
   /** マイク入力へ切替。成功で true。権限拒否などで false。 */
   async useMic(): Promise<boolean> {
     await AudioEngine.start();

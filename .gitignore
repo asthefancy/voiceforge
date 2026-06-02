@@ -3,6 +3,7 @@ dist
 dist-ssr
 *.local
 .DS_Store
+*.tsbuildinfo
 
 # Capacitor ネイティブプロジェクト（cap add で生成。コミット方針はチームで決める）
 ios/App/Pods
