@@ -16,8 +16,13 @@ const crossOriginIsolation = {
   },
 };
 
+// GitHub Pages はサブパス配信（例: /voiceforge/）。
+// デプロイ用 workflow が GHPAGES_BASE を渡す。ローカル/Capacitor は "/" のまま。
+const base = process.env.GHPAGES_BASE || "/";
+
 // https://vite.dev/config/
 export default defineConfig({
+  base,
   plugins: [
     react(),
     crossOriginIsolation,
@@ -32,7 +37,8 @@ export default defineConfig({
         background_color: "#0b0b12",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        // 相対指定にすることでルート配信(/)とサブパス配信(/voiceforge/)の両方で正しく動く
+        start_url: ".",
         icons: [
           { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
           { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },

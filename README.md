@@ -137,11 +137,37 @@ npm run cap:android       # Android Studio
 > を自己ホスト（`public/ffmpeg/` に `@ffmpeg/core` の dist を同梱し `/ffmpeg`）へ
 > 変更してください。現状は初回のみ CDN から core を取得します。
 
-### PWA アイコン（未同梱）
+### PWA アイコン
 
-`public/` に以下の PNG を追加してください（`vite.config.ts` の manifest が参照）:
-`pwa-192x192.png` / `pwa-512x512.png` / `apple-touch-icon.png`。
-`public/favicon.svg` を元に書き出すのが簡単です（例: `npx @vite-pwa/assets-generator`）。
+`public/favicon.svg` から `pwa-192x192.png` / `pwa-512x512.png` / `apple-touch-icon.png` を
+生成済み（`npm run gen:icons` で再生成、`scripts/gen-icons.mjs` が sharp でラスタライズ）。
+
+---
+
+## 🌐 GitHub Pages デプロイ（PWA）
+
+`.github/workflows/deploy-pages.yml` が `main` への push 時に **ビルド → Pages へ自動デプロイ**する。
+
+- 公開 URL: `https://<ユーザー名>.github.io/voiceforge/`
+- 初回は workflow 内の `actions/configure-pages`（`enablement: true`）が Pages を自動有効化。
+  反映されない場合は Settings → Pages → Source を **GitHub Actions** に設定。
+- サブパス配信のため、ビルドは `GHPAGES_BASE=/voiceforge/` で `base` を設定（`vite.config.ts`）。
+  ランタイムのアセット参照は `import.meta.env.BASE_URL`、manifest は `start_url: "."` で
+  ルート/サブパス両対応にしてある。
+
+> **COOP/COEP について**: GitHub Pages は静的ホストで COOP/COEP ヘッダーを付与できないが、
+> 本アプリの ffmpeg は **シングルスレッド core（SharedArrayBuffer 不要）** を使うため、
+> 動画処理を含め Pages 上で完全に動作する。
+>
+> **完全オフライン PWA**にしたい場合は ffmpeg core が初回 CDN 取得である点に注意（上記
+> 「ネイティブで完全オフライン」と同様、`public/ffmpeg/` へ self-host して `CORE_BASE` を
+> 変更すれば SW がキャッシュ可能になる）。
+
+ローカルでの Pages ビルド確認（Windows）:
+
+```powershell
+$env:GHPAGES_BASE = "/voiceforge/"; npm run build; npm run preview
+```
 
 ---
 

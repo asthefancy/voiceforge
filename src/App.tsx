@@ -128,7 +128,7 @@ export default function App() {
     <div className="mx-auto flex min-h-full max-w-md flex-col">
       <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 glass">
         <div className="flex items-center gap-2">
-          <img src="/favicon.svg" alt="" className="h-7 w-7" />
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" className="h-7 w-7" />
           <h1 className="text-lg font-bold gradient-text">VoiceForge</h1>
         </div>
         <Button variant="ghost" size="icon" onClick={toggle} aria-label="テーマ切替">
