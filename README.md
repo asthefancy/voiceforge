@@ -118,17 +118,30 @@ npm run cap:android       # = build + cap sync android + cap open android
 > （manifest に `RECORD_AUDIO` がある前提）。生成物（`assets/public` 等）は
 > `android/.gitignore` で除外され、ソースのみ管理される。
 
-### iOS（未生成 ⛔ macOS 必須）
+### iOS（macOS 必須 ／ Windows からはクラウド Mac でビルド）
 
-iOS プロジェクトの生成・ビルドは **macOS + Xcode が必須**（Windows 不可）。Mac 上で:
+iOS の生成・ビルドは **macOS + Xcode が必須**（`cap add ios` が内部で `pod install` を要求）。
+`@capacitor/ios` は依存に追加済み。`ios/` は **CI で都度生成**するため `.gitignore` で除外している。
+
+**A. Windows からでも可：クラウド Mac（GitHub Actions）でビルド**
+
+`.github/workflows/ios-build.yml`（`macos-latest`）が、push または手動実行で
+「web build → `cap add ios` → `xcodebuild`（シミュレータ・署名なし）」を実行し、
+**iOS アプリがコンパイルできるかを検証**する。Actions タブの “iOS build (cloud Mac)” →
+Run workflow で起動。
+
+> インストール可能な `.ipa`（実機/TestFlight）には **Apple Developer 署名**（証明書・
+> プロビジョニングプロファイルを Secrets 化）が別途必要。本 workflow はコンパイル検証まで。
+
+**B. Mac ローカル**
 
 ```bash
-npm i @capacitor/ios
-npx cap add ios
-npm run cap:ios           # = build + cap sync ios + cap open ios
+npm ci
+npx cap add ios          # ios/ 生成 + pod install
+npm run cap:ios          # = build + cap sync ios + cap open ios（Xcode で開く）
 ```
 
-`ios/App/App/Info.plist` に下記を追加（マイク必須）:
+`ios/App/App/Info.plist` のマイク用途文言は CI が自動設定。ローカルでは下記を追加:
 
 ```xml
 <key>NSMicrophoneUsageDescription</key>

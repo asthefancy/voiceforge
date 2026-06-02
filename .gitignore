@@ -5,9 +5,11 @@ dist-ssr
 .DS_Store
 *.tsbuildinfo
 
-# Capacitor ネイティブプロジェクト（cap add で生成。コミット方針はチームで決める）
-ios/App/Pods
-ios/App/build
+# iOS は macOS 必須。ここでは CI(macOS ランナー)で都度生成するため ios/ 全体を除外。
+# Mac でローカル開発しコミットしたくなったらこの行を外す。
+ios/
+
+# Capacitor Android（生成物のみ除外。ソースは管理）
 android/.gradle
 android/app/build
 android/build

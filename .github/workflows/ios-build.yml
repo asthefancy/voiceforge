@@ -1,0 +1,66 @@
+name: iOS build (cloud Mac)
+
+# iOS は macOS が必須。Windows ローカルでは生成/ビルドできないため、
+# GitHub の macOS ランナーで「web ビルド → cap add ios → xcodebuild」を実行する。
+# シミュレータ向け・署名なしのコンパイル検証（インストール可能な .ipa には Apple 署名が別途必要）。
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "index.html"
+      - "capacitor.config.ts"
+      - "vite.config.ts"
+      - "package.json"
+      - ".github/workflows/ios-build.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-build
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web
+        run: npm run build
+
+      - name: Add iOS platform (生成 + pod install)
+        run: npx cap add ios
+
+      - name: Sync
+        run: npx cap sync ios
+
+      - name: Set microphone usage description (Info.plist)
+        run: |
+          PLIST=ios/App/App/Info.plist
+          DESC='声をリアルタイムで変換するためにマイクを使用します。音声は端末内でのみ処理され、外部に送信されません。'
+          /usr/libexec/PlistBuddy -c "Add :NSMicrophoneUsageDescription string $DESC" "$PLIST" \
+            || /usr/libexec/PlistBuddy -c "Set :NSMicrophoneUsageDescription $DESC" "$PLIST"
+
+      - name: Build for simulator (no code signing)
+        run: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
